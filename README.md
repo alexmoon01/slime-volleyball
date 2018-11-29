@@ -1,4 +1,4 @@
-# slime-volleyball
+# Slime Volleyball
 It's a slime volleyball game. Mostly experimental to see just how bad the fabled Java graphics API is. WIP, if you use it now be warned it does precisely nothing.
 
 # Goals:
