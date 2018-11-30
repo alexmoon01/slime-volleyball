@@ -36,6 +36,8 @@ public class Slime extends JComponent {
   
   private Ball ball; //Private instance of the ball for easy access
   
+  private BufferedImage greenSlime;
+  
   /**
    * A mess of a constructor that basically instantiates anything that could even possibly
    * have to do with the slime. Don't worry it makes sense.
@@ -58,6 +60,13 @@ public class Slime extends JComponent {
     yPos = y;
     xVel = 0;
     yVel = 0;
+    //Imports the image of the slime cus APPARENTLY Java can't draw semicircles
+    try {
+      greenSlime = ImageIO.read(new File("GreenSlime.png"));
+    } catch (IOException e1) {
+      System.out.println("Oops");
+      greenSlime = null;
+    }
     
     WIDTH = width;
     HEIGHT = height;
@@ -128,10 +137,10 @@ public class Slime extends JComponent {
     }
     //Moves slime up and down, then resolves gravity and floor
     yPos += yVel;
-    if (yPos < MAX_Y) {
+    if (yPos < MAX_Y - HEIGHT - 200) {
       yVel += G;
     } else {
-      yPos = MAX_Y;
+      yPos = MAX_Y - HEIGHT - 100;
       yVel = 0;
     }
     hitBall();
@@ -145,8 +154,8 @@ public class Slime extends JComponent {
    * simple radius calculations.
    */
   public void hitBall() {
-    int circleCenterY = yPos + (HEIGHT / 2); //Redefining the wheel
-    int circleCenterX = xPos;
+    int circleCenterY = yPos + HEIGHT; //Redefining the wheel
+    int circleCenterX = xPos + WIDTH / 2;
     
     //Distance = sqrt((ballX - thisX)^2 + (ballY - thisY)^2)
     double delXSquared = Math.pow(ball.getxPos() - circleCenterX, 2);
@@ -165,14 +174,11 @@ public class Slime extends JComponent {
    * @param g
    */
   public void paint(Graphics g) {
-    try {
-      BufferedImage greenSlime = ImageIO.read(new File("GreenSlime.png"));
-      g.drawImage(greenSlime, 50, 50, 100, 100, null);
-    } catch (IOException e) {
-      System.out.println("This shouldn't happen.");
-      System.exit(1);
+    System.out.println("Hello?");
+    System.out.println(greenSlime.getHeight());
+    if (g.drawImage(greenSlime, xPos - WIDTH / 2, yPos - HEIGHT / 2, WIDTH, HEIGHT, null)) {
+      System.out.println("It worked???");
     }
-    //TODO Figure out how to draw a semicircle
   }
 
   /**
