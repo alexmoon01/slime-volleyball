@@ -1,3 +1,6 @@
+import java.awt.Graphics;
+import javax.swing.KeyStroke;
+
 /**
  * A player, controlled for now by three keys
  * 
@@ -5,27 +8,43 @@
  */
 public class Slime {
 
+  private static final int G = 1; //The acceleration of gravity
+  
   private int xPos; //X-Position of Slime
   private int yPos; //Y-Position of Slime
   private int xVel; //X-Velocity of Slime (Right is positive)
-  private int yVel; //Y-Velocity of Slime (Up is positive)
+  private int yVel; //Y-Velocity of Slime (Down is positive)
   
   private final int MIN_X; //The x-value of the left boundary
   private final int MAX_X; //The x-value of the right boundary
   private final int MAX_Y; //The floor
   private final int WIDTH; //The width of the slime
   private final int HEIGHT; //The height of the slime
-  
-  private final int G; //The acceleration of gravity
-  
-  private final char UP_KEY; //Character that represents keybinding of jump
-  private final char LEFT_KEY; //Character that represents keybinding of moving left
-  private final char RIGHT_KEY; //Character that represents keybinding of moving right
+    
+  private final KeyStroke UP_KEY; //Keybinding of jump
+  private final KeyStroke LEFT_KEY; //Keybinding of moving left
+  private final KeyStroke RIGHT_KEY; //Keybinding of moving right
   
   private Ball ball; //Private instance of the ball for easy access
   
-  public Slime(int x, int y, int minX, int maxX, int maxY, char up, int width, int height,
-      char left, char right, Ball ball) {
+  /**
+   * A mess of a constructor that basically instantiates anything that could even possibly
+   * have to do with the slime. Don't worry it makes sense.
+   * 
+   * @param x The starting x position of the slime
+   * @param y The starting y position of the slime
+   * @param minX The furthest left the slime is allowed to go
+   * @param maxX The furthest right the slime is allowed to go
+   * @param maxY The downest the slime is allowed to go
+   * @param up The keybinding for the Up key
+   * @param left The keybinding for the Left key
+   * @param right The keybinding for the Right key
+   * @param width The width of the slime
+   * @param height The height of the slime
+   * @param ball The ball to be hit.
+   */
+  public Slime(int x, int y, int minX, int maxX, int maxY, KeyStroke up, 
+      KeyStroke left, KeyStroke right, int width, int height, Ball ball) {
     xPos = x;
     yPos = y;
     xVel = 0;
@@ -34,15 +53,13 @@ public class Slime {
     WIDTH = width;
     HEIGHT = height;
     //Corrects boundaries for width and height of slime
-    MIN_X = minX + (WIDTH / 2);
-    MAX_X = maxX - (WIDTH / 2);
-    MAX_Y = maxY - (HEIGHT / 2);
+    MIN_X = minX;
+    MAX_X = maxX + WIDTH;
+    MAX_Y = maxY + HEIGHT;
     
     UP_KEY = up;
     LEFT_KEY = left;
     RIGHT_KEY = right;
-    
-    G = 1;
     
     this.ball = ball;
   }
@@ -63,6 +80,39 @@ public class Slime {
       yPos = MAX_Y;
       yVel = 0;
     }
+    hitBall();
+  }
+  
+  /**
+   * Checks if the slime is touching the ball. If so, hucks the ball
+   * wherever is appropriate. Redefines the center of the slime as 
+   * the middle of its base, to take advantage of the fact that the
+   * slime is semicircular, reducing the calculations to relatively
+   * simple radius calculations.
+   */
+  public void hitBall() {
+    int circleCenterY = yPos + (HEIGHT / 2); //Redefining the wheel
+    int circleCenterX = xPos;
+    
+    //Distance = sqrt((ballX - thisX)^2 + (ballY - thisY)^2)
+    double delXSquared = Math.pow(ball.getxPos() - circleCenterX, 2);
+    double delYSquared = Math.pow(ball.getyPos() - circleCenterY, 2);
+    double trueDistance = Math.sqrt(delXSquared + delYSquared);
+    
+    //If the ball and the slime are touching, yeets the ball into the nether realm
+    if (trueDistance <= (WIDTH / 2) + ball.getRadius()) {
+      ball.yeet(this);
+    }
+  }
+  
+  /**
+   * Paints the slime onto the graphics object.
+   * 
+   * @param g
+   */
+  public void paint(Graphics g) {
+    g.fillOval(xPos, yPos, WIDTH, HEIGHT);
+    //TODO Figure out how to draw a semicircle
   }
 
   /**
@@ -101,7 +151,7 @@ public class Slime {
    * Getter for up key binding
    * @return character up key binding
    */
-  public char getUpKey() {
+  public KeyStroke getUpKey() {
     return UP_KEY;
   }
 
@@ -109,7 +159,7 @@ public class Slime {
    * Getter for left key binding
    * @return character left key binding
    */
-  public char getLeftKey() {
+  public KeyStroke getLeftKey() {
     return LEFT_KEY;
   }
 
@@ -117,7 +167,7 @@ public class Slime {
    * Getter for right key binding
    * @return character right key binding
    */
-  public char getRightKey() {
+  public KeyStroke getRightKey() {
     return RIGHT_KEY;
   }
 
