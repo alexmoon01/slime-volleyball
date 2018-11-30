@@ -5,7 +5,9 @@
  */
 public class Ball {
 
-  private static final int G = 1; //The acceleration of gravity
+  private static final double G = 1; //The acceleration of gravity
+  //How bouncy the slime is
+  private static final double COEF_OF_BOUNCE = .2;
   
   private int xPos; //X-Position of ball
   private int yPos; //Y-Position of ball
@@ -41,11 +43,25 @@ public class Ball {
   }
   
   /**'
-   * Yeets the ball
+   * Yeets the ball. I hate physics.
    * @param yeeter The slime who is doing the yeeting
    */
   public void yeet(Slime yeeter) {
-    //TODO Make this work, like do math and shit
+    double hypotenuse = yeeter.getWidth() / 2 + RADIUS;
+    double angleOfImpact = Math.atan2(yPos - yeeter.getyPos(), xPos - yeeter.getxPos());
+    double angleOfApproach = Math.atan2(yVel, xVel);
+    //Reflects the angle of approach across the angle of impact. Trust me I did math for this.
+    double initAngleOfDeparture = (2 * angleOfImpact) - angleOfApproach;
+    //Applies this transformation to the ball
+    double newXVel = Math.cos(initAngleOfDeparture);
+    double newYVel = Math.sin(initAngleOfDeparture);
+    //Takes into account the velocity of the yeeter
+    newXVel += Math.cos(angleOfImpact) * yeeter.getxVel() * COEF_OF_BOUNCE;
+    newYVel += Math.sin(angleOfImpact) * yeeter.getyVel() * COEF_OF_BOUNCE;
+    
+    xVel = (int)newXVel;
+    yVel = (int)newYVel;
+    //Fuck physics
   }
 
   /**
