@@ -1,4 +1,13 @@
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.Action;
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 /**
@@ -6,9 +15,9 @@ import javax.swing.KeyStroke;
  * 
  * @author Alex
  */
-public class Slime {
+public class Slime extends JComponent {
 
-  private static final int G = 1; //The acceleration of gravity
+  private static final double G = 1; //The acceleration of gravity
   
   private int xPos; //X-Position of Slime
   private int yPos; //Y-Position of Slime
@@ -21,9 +30,9 @@ public class Slime {
   private final int WIDTH; //The width of the slime
   private final int HEIGHT; //The height of the slime
     
-  private final KeyStroke UP_KEY; //Keybinding of jump
-  private final KeyStroke LEFT_KEY; //Keybinding of moving left
-  private final KeyStroke RIGHT_KEY; //Keybinding of moving right
+  private final String UP_KEY; //Keybinding of jump
+  private final String LEFT_KEY; //Keybinding of moving left
+  private final String RIGHT_KEY; //Keybinding of moving right
   
   private Ball ball; //Private instance of the ball for easy access
   
@@ -43,8 +52,8 @@ public class Slime {
    * @param height The height of the slime
    * @param ball The ball to be hit.
    */
-  public Slime(int x, int y, int minX, int maxX, int maxY, KeyStroke up, 
-      KeyStroke left, KeyStroke right, int width, int height, Ball ball) {
+  public Slime(int x, int y, int minX, int maxX, int maxY, String up, 
+      String left, String right, int width, int height, Ball ball) {
     xPos = x;
     yPos = y;
     xVel = 0;
@@ -60,6 +69,51 @@ public class Slime {
     UP_KEY = up;
     LEFT_KEY = left;
     RIGHT_KEY = right;
+    //Defining the jump action
+    Action jump = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (yPos >= MAX_Y) {
+          yVel = -10;
+          yPos--;
+        }
+      }
+    };
+    //Defining the move left action
+    Action moveLeft = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        xVel = -10;
+      }
+    };
+    //Defining the move right action
+    Action moveRight = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        xVel = 10;
+      }
+    };
+    //Defining the stop action
+    Action stop = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        xVel = 0;
+      }
+    };
+    //Binding the jump action to the up key
+    this.getInputMap().put(KeyStroke.getKeyStroke(UP_KEY), "Up Pressed");
+    this.getActionMap().put("Up Pressed", jump);
+    //Binding the move left action the the left key
+    this.getInputMap().put(KeyStroke.getKeyStroke(LEFT_KEY), "Move Left");
+    this.getActionMap().put("Move Left", moveLeft);
+    //Binding the move right action to the right key
+    this.getInputMap().put(KeyStroke.getKeyStroke(RIGHT_KEY), "Move Right");
+    this.getActionMap().put("Move Right", moveRight);
+    //Binding the stop action to the release of either the left or right key
+    this.getInputMap().put(KeyStroke.getKeyStroke(RIGHT_KEY + " released"), "Stop");
+    this.getInputMap().put(KeyStroke.getKeyStroke(LEFT_KEY + " released"), "Stop");
+    this.getActionMap().put("Stop", stop);
+    
     
     this.ball = ball;
   }
@@ -111,7 +165,13 @@ public class Slime {
    * @param g
    */
   public void paint(Graphics g) {
-    g.fillOval(xPos, yPos, WIDTH, HEIGHT);
+    try {
+      BufferedImage greenSlime = ImageIO.read(new File("GreenSlime.png"));
+      g.drawImage(greenSlime, 50, 50, 100, 100, null);
+    } catch (IOException e) {
+      System.out.println("This shouldn't happen.");
+      System.exit(1);
+    }
     //TODO Figure out how to draw a semicircle
   }
 
@@ -149,25 +209,25 @@ public class Slime {
 
   /**
    * Getter for up key binding
-   * @return character up key binding
+   * @return up key binding
    */
-  public KeyStroke getUpKey() {
+  public String getUpKey() {
     return UP_KEY;
   }
 
   /**
    * Getter for left key binding
-   * @return character left key binding
+   * @return left key binding
    */
-  public KeyStroke getLeftKey() {
+  public String getLeftKey() {
     return LEFT_KEY;
   }
 
   /**
    * Getter for right key binding
-   * @return character right key binding
+   * @return right key binding
    */
-  public KeyStroke getRightKey() {
+  public String getRightKey() {
     return RIGHT_KEY;
   }
 
@@ -177,6 +237,14 @@ public class Slime {
    */
   public Ball getBall() {
     return ball;
+  }
+  
+  /**
+   * Getter for width
+   * @return width
+   */
+  public int getWidth() {
+    return WIDTH;
   }
 }
 
