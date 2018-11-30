@@ -93,6 +93,7 @@ public class Slime extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         xVel = -10;
+        System.out.println("Can I get a hell yes?");
       }
     };
     //Defining the move right action
@@ -110,17 +111,17 @@ public class Slime extends JComponent {
       }
     };
     //Binding the jump action to the up key
-    this.getInputMap().put(KeyStroke.getKeyStroke(UP_KEY), "Up Pressed");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(UP_KEY), "Up Pressed");
     this.getActionMap().put("Up Pressed", jump);
     //Binding the move left action the the left key
-    this.getInputMap().put(KeyStroke.getKeyStroke(LEFT_KEY), "Move Left");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(LEFT_KEY), "Move Left");
     this.getActionMap().put("Move Left", moveLeft);
     //Binding the move right action to the right key
-    this.getInputMap().put(KeyStroke.getKeyStroke(RIGHT_KEY), "Move Right");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(RIGHT_KEY), "Move Right");
     this.getActionMap().put("Move Right", moveRight);
     //Binding the stop action to the release of either the left or right key
-    this.getInputMap().put(KeyStroke.getKeyStroke(RIGHT_KEY + " released"), "Stop");
-    this.getInputMap().put(KeyStroke.getKeyStroke(LEFT_KEY + " released"), "Stop");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(RIGHT_KEY + " released"), "Stop");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(LEFT_KEY + " released"), "Stop");
     this.getActionMap().put("Stop", stop);
     
     
@@ -165,19 +166,6 @@ public class Slime extends JComponent {
     //If the ball and the slime are touching, yeets the ball into the nether realm
     if (trueDistance <= (WIDTH / 2) + ball.getRadius()) {
       ball.yeet(this);
-    }
-  }
-  
-  /**
-   * Paints the slime onto the graphics object.
-   * 
-   * @param g
-   */
-  public void paint(Graphics g) {
-    System.out.println("Hello?");
-    System.out.println(greenSlime.getHeight());
-    if (g.drawImage(greenSlime, xPos - WIDTH / 2, yPos - HEIGHT / 2, WIDTH, HEIGHT, null)) {
-      System.out.println("It worked???");
     }
   }
 
@@ -251,6 +239,14 @@ public class Slime extends JComponent {
    */
   public int getWidth() {
     return WIDTH;
+  }
+  
+  /**
+   * Getter for height
+   * @return height
+   */
+  public int getHeight() {
+    return HEIGHT;
   }
 }
 

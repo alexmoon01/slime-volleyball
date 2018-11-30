@@ -33,7 +33,7 @@ public class Background extends JFrame {
     Y_DIM = 500;
     
     ball = new Ball(100, 100, 0, 500, 500, 10);
-    player1 = new Slime(100, 100, 0, 500, 500, "W", "A", "D", 50, 50, ball);
+    player1 = new Slime(100, 100, 0, 500, 500, "W", "A", "D", 100, 50, ball);
     
     try {
       greenSlime = ImageIO.read(new File("GreenSlime.png"));
@@ -47,10 +47,8 @@ public class Background extends JFrame {
       //instead of doing something that I'm supposed to do.
       @Override
       public void paint(Graphics g) {
-        super.paintComponents(g);
-        System.out.println(player1.getxPos());
         g.drawImage(greenSlime, player1.getxPos(), 
-            player1.getyPos(), null);
+            player1.getyPos(), player1.getWidth(), player1.getHeight(), null);
       }
     };
     this.add(mainPanel); //Adds mainPanel as the main display
