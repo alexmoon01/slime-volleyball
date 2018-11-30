@@ -3,6 +3,6 @@ It's a slime volleyball game. Mostly experimental to see just how bad the fabled
 
 # Goals:
 1. Use java.awt and javax.swing to create a basic applet. IN PROGRESS
-2. Implement keyboard input for slimes. CHECK
+2. Implement keyboard input for slimes. IN PROGRESS
 3. Implement collision detection betweens the slimes and the ball. IN PROGRESS
 4. (End reach goal, deserving of its own project) Create an AI that can play the game at its most basic level.
