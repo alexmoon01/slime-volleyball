@@ -43,7 +43,7 @@ public class Ball {
   }
   
   /**'
-   * Yeets the ball. I hate physics.
+   * Yeets the ball. I hate physics. So much.
    * @param yeeter The slime who is doing the yeeting
    */
   public void yeet(Slime yeeter) {

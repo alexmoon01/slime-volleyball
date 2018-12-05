@@ -1,5 +1,6 @@
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -40,20 +41,28 @@ public class Slime extends JComponent {
   
   /**
    * A mess of a constructor that basically instantiates anything that could even possibly
-   * have to do with the slime. Don't worry it makes sense.
+   * have to do with the slime. Don't worry it makes sense.<p>
+   * 
+   * The action definitions may look a bit confusing, but the basic idea is:<p>
+   * 
+   * 1. Define each action by defining an anonymous java.awt.AbstractAction.<br>
+   * 2. Assign each keyboard input to an action defined by a string.<br>
+   * 3. Associate each string with the above-defined action.
+   * 
    * 
    * @param x The starting x position of the slime
    * @param y The starting y position of the slime
    * @param minX The furthest left the slime is allowed to go
    * @param maxX The furthest right the slime is allowed to go
    * @param maxY The downest the slime is allowed to go
-   * @param up The keybinding for the Up key
-   * @param left The keybinding for the Left key
-   * @param right The keybinding for the Right key
+   * @param up The keybinding for the Up key ("W" or "UP")
+   * @param left The keybinding for the Left key ("A" or "LEFT")
+   * @param right The keybinding for the Right key ("D" or "RIGHT")
    * @param width The width of the slime
    * @param height The height of the slime
    * @param ball The ball to be hit.
    */
+  @SuppressWarnings("serial")
   public Slime(int x, int y, int minX, int maxX, int maxY, String up, 
       String left, String right, int width, int height, Ball ball) {
     xPos = x;
@@ -68,12 +77,14 @@ public class Slime extends JComponent {
       greenSlime = null;
     }
     
+    
+    
     WIDTH = width;
     HEIGHT = height;
     //Corrects boundaries for width and height of slime
     MIN_X = minX;
-    MAX_X = maxX + WIDTH;
-    MAX_Y = maxY + HEIGHT;
+    MAX_X = maxX - WIDTH;
+    MAX_Y = maxY - HEIGHT;
     
     UP_KEY = up;
     LEFT_KEY = left;
@@ -83,7 +94,7 @@ public class Slime extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (yPos >= MAX_Y) {
-          yVel = -10;
+          yVel = -20;
           yPos--;
         }
       }
@@ -93,7 +104,6 @@ public class Slime extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         xVel = -10;
-        System.out.println("Can I get a hell yes?");
       }
     };
     //Defining the move right action
@@ -110,18 +120,22 @@ public class Slime extends JComponent {
         xVel = 0;
       }
     };
+    
     //Binding the jump action to the up key
     this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(UP_KEY), "Up Pressed");
     this.getActionMap().put("Up Pressed", jump);
+    
     //Binding the move left action the the left key
     this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(LEFT_KEY), "Move Left");
     this.getActionMap().put("Move Left", moveLeft);
+    
     //Binding the move right action to the right key
     this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(RIGHT_KEY), "Move Right");
     this.getActionMap().put("Move Right", moveRight);
+    
     //Binding the stop action to the release of either the left or right key
-    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(RIGHT_KEY + " released"), "Stop");
-    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(LEFT_KEY + " released"), "Stop");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released " + RIGHT_KEY), "Stop");
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released " + LEFT_KEY), "Stop");
     this.getActionMap().put("Stop", stop);
     
     
@@ -129,19 +143,27 @@ public class Slime extends JComponent {
   }
   
   /**
+   * Draws the slime on the given canvas.
+   * @param g The graphics object upon which this will draw itself.
+   */
+  public void draw(Graphics g) {
+    g.drawImage(greenSlime, xPos, yPos, WIDTH, HEIGHT, null);
+  }
+  
+  /**
    * Moves the slime based on current x and y velocity
    */
   public void move() {
     //If statement prevents slime from leaving boundaries
-    if (!(xPos == MAX_X && xVel > 0) && !(xPos == MIN_X && xVel < 0)) {
+    if (!(xPos >= MAX_X && xVel > 0) && !(xPos <= MIN_X && xVel < 0)) {
       xPos += xVel;
     }
     //Moves slime up and down, then resolves gravity and floor
     yPos += yVel;
-    if (yPos < MAX_Y - HEIGHT - 200) {
-      yVel += G;
+    if (yPos < MAX_Y) {
+      yVel += G; //Accelerates for gravity
     } else {
-      yPos = MAX_Y - HEIGHT - 100;
+      yPos = MAX_Y;
       yVel = 0;
     }
     hitBall();
@@ -248,13 +270,4 @@ public class Slime extends JComponent {
   public int getHeight() {
     return HEIGHT;
   }
-}
-
-/**
- * The eye of the slime
- * 
- * @author Alex
- */
-class Eye {
-  
 }
