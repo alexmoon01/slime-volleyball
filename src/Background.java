@@ -1,8 +1,5 @@
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,10 +33,10 @@ public class Background extends JFrame {
     X_DIM = 1000;
     Y_DIM = 500;
     
-    tick = 10;
+    tick = 30;
     
-    ball = new Ball(100, 100, 0, 500, 500, 10);
-    player1 = new Slime(100, 100, 0, 500, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
+    ball = new Ball(100, 100, 0, X_DIM, Y_DIM - 25, 5);
+    player1 = new Slime(X_DIM / 4, Y_DIM - 25, 0, 500, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
     
     try {
       greenSlime = ImageIO.read(new File("GreenSlime.png"));
@@ -53,13 +50,15 @@ public class Background extends JFrame {
       //instead of doing something that I'm supposed to do.
       @Override
       public void paint(Graphics g) {
-        g.setColor(Color.BLUE);
+        g.setColor(new Color(17, 57, 122));
         g.fillRect(0, 0, X_DIM, Y_DIM);
         player1.draw(g);
+        ball.draw(g);
       }
     };
     this.add(mainPanel); //Adds mainPanel as the main display
     this.add(player1); //Adds the first player
+    this.add(ball); //Adds the ball
 
     this.setVisible(true);
     mainPanel.setSize(X_DIM, Y_DIM); //Actually setting the size
@@ -71,6 +70,7 @@ public class Background extends JFrame {
         Thread.sleep(tick);
         //Moves players and refreshes the canvas
         player1.move();
+        ball.move();
         mainPanel.repaint();
       } catch (InterruptedException e1) {
         System.exit(1);

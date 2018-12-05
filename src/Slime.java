@@ -1,13 +1,11 @@
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.Action;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
@@ -18,12 +16,13 @@ import javax.swing.KeyStroke;
  */
 public class Slime extends JComponent {
 
-  private static final double G = 1; //The acceleration of gravity
+  public static final double G = 2; //The acceleration of gravity
   
   private int xPos; //X-Position of Slime
   private int yPos; //Y-Position of Slime
   private int xVel; //X-Velocity of Slime (Right is positive)
   private int yVel; //Y-Velocity of Slime (Down is positive)
+  private int speed; //The speed of the slime in general
   
   private final int MIN_X; //The x-value of the left boundary
   private final int MAX_X; //The x-value of the right boundary
@@ -34,10 +33,12 @@ public class Slime extends JComponent {
   private final String UP_KEY; //Keybinding of jump
   private final String LEFT_KEY; //Keybinding of moving left
   private final String RIGHT_KEY; //Keybinding of moving right
+  private boolean rightPressed; //Used to keep track of keys presses
+  private boolean leftPressed;
   
   private Ball ball; //Private instance of the ball for easy access
   
-  private BufferedImage greenSlime;
+  private BufferedImage greenSlime; //The image of one of the slimes
   
   /**
    * A mess of a constructor that basically instantiates anything that could even possibly
@@ -69,6 +70,7 @@ public class Slime extends JComponent {
     yPos = y;
     xVel = 0;
     yVel = 0;
+    speed = 10;
     //Imports the image of the slime cus APPARENTLY Java can't draw semicircles
     try {
       greenSlime = ImageIO.read(new File("GreenSlime.png"));
@@ -76,8 +78,6 @@ public class Slime extends JComponent {
       System.out.println("Oops");
       greenSlime = null;
     }
-    
-    
     
     WIDTH = width;
     HEIGHT = height;
@@ -103,21 +103,38 @@ public class Slime extends JComponent {
     Action moveLeft = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        xVel = -10;
+        xVel = -speed;
+        leftPressed = true;
       }
     };
     //Defining the move right action
     Action moveRight = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        xVel = 10;
+        xVel = speed;
+        rightPressed = true;
       }
     };
     //Defining the stop action
     Action stop = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        xVel = 0;
+        char command = e.getActionCommand().charAt(0);
+        if (command == 'a') {
+          leftPressed = false;
+          if (rightPressed) {
+            xVel = speed;
+          } else {
+            xVel = 0;
+          }
+        } else if (command == 'd') {
+          rightPressed = false;
+          if (leftPressed) {
+            xVel = -speed;
+          } else {
+            xVel = 0;
+          }
+        }
       }
     };
     
@@ -177,16 +194,16 @@ public class Slime extends JComponent {
    * simple radius calculations.
    */
   public void hitBall() {
-    int circleCenterY = yPos + HEIGHT; //Redefining the wheel
-    int circleCenterX = xPos + WIDTH / 2;
+    double circleCenterY = yPos + HEIGHT; //Redefining the wheel
+    double circleCenterX = xPos + WIDTH / 2;
     
     //Distance = sqrt((ballX - thisX)^2 + (ballY - thisY)^2)
-    double delXSquared = Math.pow(ball.getxPos() - circleCenterX, 2);
-    double delYSquared = Math.pow(ball.getyPos() - circleCenterY, 2);
+    double delXSquared = Math.pow((double)ball.getxPos() - circleCenterX, 2);
+    double delYSquared = Math.pow((double)ball.getyPos() - circleCenterY, 2);
     double trueDistance = Math.sqrt(delXSquared + delYSquared);
     
     //If the ball and the slime are touching, yeets the ball into the nether realm
-    if (trueDistance <= (WIDTH / 2) + ball.getRadius()) {
+    if (trueDistance <= HEIGHT + ball.getRadius()) {
       ball.yeet(this);
     }
   }

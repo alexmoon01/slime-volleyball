@@ -1,13 +1,20 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import javax.swing.JComponent;
+
 /**
  * The Ball that will be hit.
  * 
  * @author Alex
  */
-public class Ball {
+public class Ball extends JComponent {
 
-  private static final double G = 1; //The acceleration of gravity
-  //How bouncy the slime is
-  private static final double COEF_OF_BOUNCE = .2;
+  private static final double G = Slime.G; //The acceleration of gravity
+  //How bouncy the slime is (ABSOLUTELY DO NOT MAKE THIS GREATER THAN 1 IF YOU HATE FUN)
+  private static final double COEF_OF_BOUNCE = .8;
+  
+  private final int START_X; //Starting x
+  private final int START_Y; //Starting y
   
   private int xPos; //X-Position of ball
   private int yPos; //Y-Position of ball
@@ -31,8 +38,10 @@ public class Ball {
    */
   public Ball (int x, int y, int minX, int maxX, 
       int maxY, int radius) {
-    xPos = x;
-    yPos = y;
+    START_X = x;
+    START_Y = y;
+    xPos = START_X;
+    yPos = START_Y;
     xVel = 0;
     yVel = 0;
     
@@ -42,25 +51,80 @@ public class Ball {
     RADIUS = radius;
   }
   
+  /**
+   * Moves the ball according to its position and velocity.
+   */
+  public void move() {
+    //Doesn't move if it's grounded.
+    if (!isGrounded()) {
+      //Bounces off the walls
+      if ((xPos >= MAX_X && xVel > 0) || 
+          (xPos <= MIN_X && xVel < 0)) {
+        xVel *= -1;
+      }
+      xPos += xVel;
+      yPos += yVel;
+      yVel += G / 2;
+    } else {
+      //Resets position of ball if it's hit the ground
+      xPos = START_X;
+      yPos = START_Y;
+      yVel = 0;
+      xVel = 0;
+    }
+  }
+  
+  /**
+   * Checks whether the ball is on the ground.
+   * @return True if the ball is on the ground.
+   */
+  public boolean isGrounded() {
+    return yPos + (RADIUS * 2) >= MAX_Y;
+  }
+  
+  /**
+   * Draws the ball on the given canvas
+   * @param g The canvas on which the method will paint.
+   */
+  public void draw(Graphics g) {
+    g.setColor(Color.BLACK);
+    g.fillOval(xPos, yPos, RADIUS * 2, RADIUS * 2);
+  }
+  
   /**'
    * Yeets the ball. I hate physics. So much.
    * @param yeeter The slime who is doing the yeeting
    */
   public void yeet(Slime yeeter) {
-    double hypotenuse = yeeter.getWidth() / 2 + RADIUS;
-    double angleOfImpact = Math.atan2(yPos - yeeter.getyPos(), xPos - yeeter.getxPos());
-    double angleOfApproach = Math.atan2(yVel, xVel);
+    
+    //The true center of the slime
+    double yeetX = yeeter.getxPos() + (yeeter.getWidth() / 2);
+    double yeetY = yeeter.getyPos() + yeeter.getHeight();
+    
+    //Finding the magnitude of the velocity of the ball
+    double magVelocity = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
+    
+    //The angle at which the ball meets the slime
+    double angleOfImpact = Math.atan2((double)yPos - yeetY, (double)xPos - yeetX);
+    //The angle at which the ball is moving
+    double angleOfApproach = Math.atan2((double)yVel, (double)xVel);
     //Reflects the angle of approach across the angle of impact. Trust me I did math for this.
     double initAngleOfDeparture = (2 * angleOfImpact) - angleOfApproach;
+    
     //Applies this transformation to the ball
-    double newXVel = Math.cos(initAngleOfDeparture);
-    double newYVel = Math.sin(initAngleOfDeparture);
+    double newXVel = -1 * Math.cos(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
+    double newYVel = -1 * Math.sin(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
+    System.out.println(newYVel);
+    
     //Takes into account the velocity of the yeeter
-    newXVel += Math.cos(angleOfImpact) * yeeter.getxVel() * COEF_OF_BOUNCE;
-    newYVel += Math.sin(angleOfImpact) * yeeter.getyVel() * COEF_OF_BOUNCE;
+    newXVel += -1 * Math.cos(angleOfImpact) * yeeter.getxVel() * COEF_OF_BOUNCE;
+    newYVel += -1 * Math.sin(angleOfImpact) * yeeter.getyVel() * COEF_OF_BOUNCE;
+    System.out.println(newYVel);
     
     xVel = (int)newXVel;
     yVel = (int)newYVel;
+    
+    move();
     //Fuck physics
   }
 
