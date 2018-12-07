@@ -19,8 +19,6 @@ public class Background extends JFrame {
   private Slime player2; //Player 2, controlled with Arrows
   private Ball ball; //The ball to be hit.
   
-  private BufferedImage greenSlime;
-  
   private JPanel mainPanel; //The main display panel
   private final int X_DIM; //The width of the display
   private final int Y_DIM; //The height of the display
@@ -33,16 +31,10 @@ public class Background extends JFrame {
     X_DIM = 1000;
     Y_DIM = 500;
     
-    tick = 30;
+    tick = 50;
     
-    ball = new Ball(100, 100, 0, X_DIM, Y_DIM - 25, 5);
+    ball = new Ball(100, 100, 0, X_DIM, Y_DIM - 25, 10);
     player1 = new Slime(X_DIM / 4, Y_DIM - 25, 0, 500, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
-    
-    try {
-      greenSlime = ImageIO.read(new File("GreenSlime.png"));
-    } catch (IOException e) {
-      greenSlime = null;
-    }
     
     mainPanel = new JPanel() {
       //This is the main paint method. Whenever the JPanel updates

@@ -9,9 +9,9 @@ import javax.swing.JComponent;
  */
 public class Ball extends JComponent {
 
-  private static final double G = Slime.G; //The acceleration of gravity
+  private static final double G = Slime.G / 2; //The acceleration of gravity
   //How bouncy the slime is (ABSOLUTELY DO NOT MAKE THIS GREATER THAN 1 IF YOU HATE FUN)
-  private static final double COEF_OF_BOUNCE = .8;
+  private static final double COEF_OF_BOUNCE = .6;
   
   private final int START_X; //Starting x
   private final int START_Y; //Starting y
@@ -19,7 +19,7 @@ public class Ball extends JComponent {
   private int xPos; //X-Position of ball
   private int yPos; //Y-Position of ball
   private int xVel; //X-Velocity of ball (Right is positive)
-  private int yVel; //Y-Velocity of ball (Down is positive)
+  private double yVel; //Y-Velocity of ball (Down is positive)
   
   private final int MIN_X; //The x-value of the left boundary
   private final int MAX_X; //The x-value of the right boundary
@@ -64,7 +64,7 @@ public class Ball extends JComponent {
       }
       xPos += xVel;
       yPos += yVel;
-      yVel += G / 2;
+      yVel += G;
     } else {
       //Resets position of ball if it's hit the ground
       xPos = START_X;
@@ -114,12 +114,10 @@ public class Ball extends JComponent {
     //Applies this transformation to the ball
     double newXVel = -1 * Math.cos(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
     double newYVel = -1 * Math.sin(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
-    System.out.println(newYVel);
     
     //Takes into account the velocity of the yeeter
-    newXVel += -1 * Math.cos(angleOfImpact) * yeeter.getxVel() * COEF_OF_BOUNCE;
-    newYVel += -1 * Math.sin(angleOfImpact) * yeeter.getyVel() * COEF_OF_BOUNCE;
-    System.out.println(newYVel);
+    newXVel += -1 * Math.cos(angleOfImpact) * (double)yeeter.getxVel() * COEF_OF_BOUNCE;
+    newYVel += -1 * Math.sin(angleOfImpact) * (double)yeeter.getyVel() * COEF_OF_BOUNCE;
     
     xVel = (int)newXVel;
     yVel = (int)newYVel;

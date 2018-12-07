@@ -16,7 +16,7 @@ import javax.swing.KeyStroke;
  */
 public class Slime extends JComponent {
 
-  public static final double G = 2; //The acceleration of gravity
+  public static final double G = 1; //The acceleration of gravity
   
   private int xPos; //X-Position of Slime
   private int yPos; //Y-Position of Slime
@@ -194,12 +194,12 @@ public class Slime extends JComponent {
    * simple radius calculations.
    */
   public void hitBall() {
-    double circleCenterY = yPos + HEIGHT; //Redefining the wheel
-    double circleCenterX = xPos + WIDTH / 2;
+    double circleCenterY = (double)yPos + (double)HEIGHT; //Redefining the wheel
+    double circleCenterX = (double)xPos + (double)WIDTH / 2;
     
     //Distance = sqrt((ballX - thisX)^2 + (ballY - thisY)^2)
-    double delXSquared = Math.pow((double)ball.getxPos() - circleCenterX, 2);
-    double delYSquared = Math.pow((double)ball.getyPos() - circleCenterY, 2);
+    double delXSquared = Math.pow((double)(ball.getxPos() + ball.getRadius()) - circleCenterX, 2);
+    double delYSquared = Math.pow((double)(ball.getyPos() + ball.getRadius()) - circleCenterY, 2);
     double trueDistance = Math.sqrt(delXSquared + delYSquared);
     
     //If the ball and the slime are touching, yeets the ball into the nether realm
