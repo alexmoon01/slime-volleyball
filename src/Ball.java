@@ -11,7 +11,9 @@ public class Ball extends JComponent {
 
   private static final double G = Slime.G / 2; //The acceleration of gravity
   //How bouncy the slime is (ABSOLUTELY DO NOT MAKE THIS GREATER THAN 1 IF YOU HATE FUN)
-  private static final double COEF_OF_BOUNCE = .6;
+  private static final double COEF_OF_BOUNCE = .9;
+  //How sticky the slime is (Keep under one unless u rly wanna yeet this ball)
+  private static final double COEF_OF_FRIC = 1.5;
   
   private final int START_X; //Starting x
   private final int START_Y; //Starting y
@@ -58,7 +60,7 @@ public class Ball extends JComponent {
     //Doesn't move if it's grounded.
     if (!isGrounded()) {
       //Bounces off the walls
-      if ((xPos >= MAX_X && xVel > 0) || 
+      if ((xPos + 2 * RADIUS>= MAX_X && xVel > 0) || 
           (xPos <= MIN_X && xVel < 0)) {
         xVel *= -1;
       }
@@ -103,6 +105,7 @@ public class Ball extends JComponent {
     
     //Finding the magnitude of the velocity of the ball
     double magVelocity = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
+    System.out.println(magVelocity + " " + yVel);
     
     //The angle at which the ball meets the slime
     double angleOfImpact = Math.atan2((double)yPos - yeetY, (double)xPos - yeetX);
@@ -116,11 +119,13 @@ public class Ball extends JComponent {
     double newYVel = -1 * Math.sin(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
     
     //Takes into account the velocity of the yeeter
-    newXVel += -1 * Math.cos(angleOfImpact) * (double)yeeter.getxVel() * COEF_OF_BOUNCE;
-    newYVel += -1 * Math.sin(angleOfImpact) * (double)yeeter.getyVel() * COEF_OF_BOUNCE;
+    //TODO: Figure out how to take into account both velocities when calculating difference
+    newXVel += Math.sin(angleOfImpact) * (double)(xVel - yeeter.getxVel()) / COEF_OF_FRIC;
+    newYVel += Math.cos(angleOfImpact) * (double)(yVel - yeeter.getyVel()) / COEF_OF_FRIC;
     
     xVel = (int)newXVel;
     yVel = (int)newYVel;
+    System.out.println(newYVel);
     
     move();
     //Fuck physics

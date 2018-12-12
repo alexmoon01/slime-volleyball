@@ -22,7 +22,8 @@ public class Slime extends JComponent {
   private int yPos; //Y-Position of Slime
   private int xVel; //X-Velocity of Slime (Right is positive)
   private int yVel; //Y-Velocity of Slime (Down is positive)
-  private int speed; //The speed of the slime in general
+  private int moveSpeed; //The speed of the slime when moving side to side
+  private int jumpSpeed; //The initial speed of the slime when it jumps
   
   private final int MIN_X; //The x-value of the left boundary
   private final int MAX_X; //The x-value of the right boundary
@@ -70,7 +71,8 @@ public class Slime extends JComponent {
     yPos = y;
     xVel = 0;
     yVel = 0;
-    speed = 10;
+    moveSpeed = 10;
+    jumpSpeed = 15;
     //Imports the image of the slime cus APPARENTLY Java can't draw semicircles
     try {
       greenSlime = ImageIO.read(new File("GreenSlime.png"));
@@ -94,7 +96,7 @@ public class Slime extends JComponent {
       @Override
       public void actionPerformed(ActionEvent e) {
         if (yPos >= MAX_Y) {
-          yVel = -20;
+          yVel = -jumpSpeed;
           yPos--;
         }
       }
@@ -103,7 +105,7 @@ public class Slime extends JComponent {
     Action moveLeft = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        xVel = -speed;
+        xVel = -moveSpeed;
         leftPressed = true;
       }
     };
@@ -111,7 +113,7 @@ public class Slime extends JComponent {
     Action moveRight = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        xVel = speed;
+        xVel = moveSpeed;
         rightPressed = true;
       }
     };
@@ -123,14 +125,14 @@ public class Slime extends JComponent {
         if (command == 'a') {
           leftPressed = false;
           if (rightPressed) {
-            xVel = speed;
+            xVel = moveSpeed;
           } else {
             xVel = 0;
           }
         } else if (command == 'd') {
           rightPressed = false;
           if (leftPressed) {
-            xVel = -speed;
+            xVel = -moveSpeed;
           } else {
             xVel = 0;
           }
