@@ -118,7 +118,6 @@ public class Ball extends JComponent {
     //Corrects position of ball to be on the surface of the slime (Angle is the same, above impact calc is fine)
     xPos = (int)yeetX + (int)(Math.cos(angleOfImpact) * (double)(RADIUS + yeeter.getHeight())) - RADIUS;
     yPos = (int)yeetY + (int)(Math.sin(angleOfImpact) * (double)(RADIUS + yeeter.getHeight())) - RADIUS;
-    System.out.println(xPos);
     
     //Applies this transformation to the ball
     double newXVel = -1 * Math.cos(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
@@ -126,7 +125,7 @@ public class Ball extends JComponent {
     
     //Takes into account the velocity of the yeeter
     newXVel += Math.sin(angleOfImpact) * (double)(xVel - yeeter.getxVel()) / COEF_OF_FRIC;
-    newYVel += Math.cos(angleOfImpact) * (double)(yVel - yeeter.getyVel()) / COEF_OF_FRIC;
+    newYVel += -1 * Math.abs(Math.cos(angleOfImpact) * (double)(yVel - yeeter.getyVel()) / COEF_OF_FRIC);
     
     xVel = newXVel;
     yVel = newYVel;
