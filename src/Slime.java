@@ -34,7 +34,7 @@ public class Slime extends JComponent {
   private final String UP_KEY; //Keybinding of jump
   private final String LEFT_KEY; //Keybinding of moving left
   private final String RIGHT_KEY; //Keybinding of moving right
-  private boolean rightPressed; //Used to keep track of keys presses
+  private boolean rightPressed;
   private boolean leftPressed;
   
   private Ball ball; //Private instance of the ball for easy access
@@ -91,6 +91,9 @@ public class Slime extends JComponent {
     UP_KEY = up;
     LEFT_KEY = left;
     RIGHT_KEY = right;
+    rightPressed = false;
+    leftPressed = false;
+    
     //Defining the jump action
     Action jump = new AbstractAction() {
       @Override
@@ -117,25 +120,27 @@ public class Slime extends JComponent {
         rightPressed = true;
       }
     };
-    //Defining the stop action
-    Action stop = new AbstractAction() {
+    //Defining the stop action for moving left
+    Action stopLeft = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        char command = e.getActionCommand().charAt(0);
-        if (command == 'a') {
-          leftPressed = false;
-          if (rightPressed) {
-            xVel = moveSpeed;
-          } else {
-            xVel = 0;
-          }
-        } else if (command == 'd') {
-          rightPressed = false;
-          if (leftPressed) {
-            xVel = -moveSpeed;
-          } else {
-            xVel = 0;
-          }
+        leftPressed = false;
+        if (rightPressed) {
+          xVel = moveSpeed;
+        } else {
+          xVel = 0;
+        }
+      }
+    };
+    //Defining the stop action for moving right (trust me this is necessary)
+    Action stopRight = new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        rightPressed = false;
+        if (leftPressed) {
+          xVel = -moveSpeed;
+        } else {
+          xVel = 0;
         }
       }
     };
@@ -152,10 +157,13 @@ public class Slime extends JComponent {
     this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(RIGHT_KEY), "Move Right");
     this.getActionMap().put("Move Right", moveRight);
     
-    //Binding the stop action to the release of either the left or right key
-    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released " + RIGHT_KEY), "Stop");
-    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released " + LEFT_KEY), "Stop");
-    this.getActionMap().put("Stop", stop);
+    //Stops moving left when left key released
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released " + LEFT_KEY), "Stop Left");
+    this.getActionMap().put("Stop Left", stopLeft);
+    
+    //Stops moving right when right key released
+    this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released " + RIGHT_KEY), "Stop Right");
+    this.getActionMap().put("Stop Right", stopRight);
     
     
     this.ball = ball;

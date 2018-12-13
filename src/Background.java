@@ -50,8 +50,9 @@ public class Background extends JFrame {
         ball.draw(g);
       }
     };
-    this.add(mainPanel); //Adds mainPanel as the main display
+    this.add(mainPanel); //Adds mainPanel as the main displayj
     this.add(player1); //Adds the first player
+    this.add(player2); //Adds the second player
     this.add(ball); //Adds the ball
 
     this.setVisible(true);
