@@ -20,7 +20,7 @@ public class Ball extends JComponent {
   
   private int xPos; //X-Position of ball
   private int yPos; //Y-Position of ball
-  private int xVel; //X-Velocity of ball (Right is positive)
+  private double xVel; //X-Velocity of ball (Right is positive)
   private double yVel; //Y-Velocity of ball (Down is positive)
   
   private final int MIN_X; //The x-value of the left boundary
@@ -102,32 +102,34 @@ public class Ball extends JComponent {
     //The true center of the slime
     double yeetX = yeeter.getxPos() + (yeeter.getWidth() / 2);
     double yeetY = yeeter.getyPos() + yeeter.getHeight();
+    double ballTrueX = xPos + RADIUS;
+    double ballTrueY = yPos + RADIUS;
     
     //Finding the magnitude of the velocity of the ball
     double magVelocity = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
-    System.out.println(magVelocity + " " + yVel);
     
     //The angle at which the ball meets the slime
-    double angleOfImpact = Math.atan2((double)yPos - yeetY, (double)xPos - yeetX);
+    double angleOfImpact = Math.atan2(ballTrueY - yeetY, ballTrueX - yeetX);
     //The angle at which the ball is moving
     double angleOfApproach = Math.atan2((double)yVel, (double)xVel);
     //Reflects the angle of approach across the angle of impact. Trust me I did math for this.
     double initAngleOfDeparture = (2 * angleOfImpact) - angleOfApproach;
+    
+    //Corrects position of ball to be on the surface of the slime (Angle is the same, above impact calc is fine)
+    xPos = (int)yeetX + (int)(Math.cos(angleOfImpact) * (double)(RADIUS + yeeter.getHeight())) - RADIUS;
+    yPos = (int)yeetY + (int)(Math.sin(angleOfImpact) * (double)(RADIUS + yeeter.getHeight())) - RADIUS;
+    System.out.println(xPos);
     
     //Applies this transformation to the ball
     double newXVel = -1 * Math.cos(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
     double newYVel = -1 * Math.sin(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
     
     //Takes into account the velocity of the yeeter
-    //TODO: Figure out how to take into account both velocities when calculating difference
     newXVel += Math.sin(angleOfImpact) * (double)(xVel - yeeter.getxVel()) / COEF_OF_FRIC;
     newYVel += Math.cos(angleOfImpact) * (double)(yVel - yeeter.getyVel()) / COEF_OF_FRIC;
     
-    xVel = (int)newXVel;
-    yVel = (int)newYVel;
-    System.out.println(newYVel);
-    
-    move();
+    xVel = newXVel;
+    yVel = newYVel;
     //Fuck physics
   }
 

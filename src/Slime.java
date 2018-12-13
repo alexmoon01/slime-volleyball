@@ -38,6 +38,8 @@ public class Slime extends JComponent {
   private boolean leftPressed;
   
   private Ball ball; //Private instance of the ball for easy access
+  private int ticksSinceBallHit; //Removes the possibility of immediately catching the ball
+  private final int TICKS_THRESHOLD; //The minimum amount of ticks between ball hits.
   
   private BufferedImage greenSlime; //The image of one of the slimes
   
@@ -87,6 +89,8 @@ public class Slime extends JComponent {
     MIN_X = minX;
     MAX_X = maxX - WIDTH;
     MAX_Y = maxY - HEIGHT;
+    TICKS_THRESHOLD = 2;
+    ticksSinceBallHit = TICKS_THRESHOLD + 1;
     
     UP_KEY = up;
     LEFT_KEY = left;
@@ -193,7 +197,14 @@ public class Slime extends JComponent {
       yPos = MAX_Y;
       yVel = 0;
     }
-    hitBall();
+    
+    //Ensures that the slime doesn't hit the ball, 
+    //immediately catch up, and hit it again. 
+    if (ticksSinceBallHit > TICKS_THRESHOLD && hitBall()) {
+      ticksSinceBallHit = 0;
+    } else {
+      ticksSinceBallHit++;
+    }
   }
   
   /**
@@ -202,20 +213,25 @@ public class Slime extends JComponent {
    * the middle of its base, to take advantage of the fact that the
    * slime is semicircular, reducing the calculations to relatively
    * simple radius calculations.
+   * @return Whether the ball was hit.
    */
-  public void hitBall() {
+  public boolean hitBall() {
     double circleCenterY = (double)yPos + (double)HEIGHT; //Redefining the wheel
     double circleCenterX = (double)xPos + (double)WIDTH / 2;
+    double ballCenterX = ball.getxPos() + ball.getRadius(); //Redefining the wheel AGAIN
+    double ballCenterY = ball.getyPos() + ball.getRadius();
     
     //Distance = sqrt((ballX - thisX)^2 + (ballY - thisY)^2)
-    double delXSquared = Math.pow((double)(ball.getxPos() + ball.getRadius()) - circleCenterX, 2);
-    double delYSquared = Math.pow((double)(ball.getyPos() + ball.getRadius()) - circleCenterY, 2);
+    double delXSquared = Math.pow(ballCenterX - circleCenterX, 2);
+    double delYSquared = Math.pow(ballCenterY - circleCenterY, 2);
     double trueDistance = Math.sqrt(delXSquared + delYSquared);
     
     //If the ball and the slime are touching, yeets the ball into the nether realm
-    if (trueDistance <= HEIGHT + ball.getRadius()) {
+    if (trueDistance <= HEIGHT + ball.getRadius() && ballCenterY <= circleCenterY) {
       ball.yeet(this);
+      return true;
     }
+    return false;
   }
 
   /**
