@@ -30,8 +30,8 @@ public class Background extends JFrame {
     tick = 50;
     
     ball = new Ball(100, 100, 0, X_DIM, Y_DIM - 25, 10);
-    player1 = new Slime(X_DIM / 4, Y_DIM - 25, 0, X_DIM / 2, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
-    player2 = new Slime(3 * X_DIM / 4, Y_DIM - 25, X_DIM / 2, X_DIM, Y_DIM - 25, "UP", "LEFT","RIGHT", 100, 50, ball);
+    player1 = new Slime(X_DIM / 4, Y_DIM - 25, 0, X_DIM / 2 - 8, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
+    player2 = new Slime(3 * X_DIM / 4, Y_DIM - 25, X_DIM / 2 - 8, X_DIM - 16, Y_DIM - 25, "UP", "LEFT","RIGHT", 100, 50, ball);
     
     mainPanel = new JPanel() {
       //This is the main paint method. Whenever the JPanel updates
@@ -44,6 +44,8 @@ public class Background extends JFrame {
         player1.draw(g);
         player2.draw(g);
         ball.draw(g);
+        g.setColor(Color.BLACK);
+        g.drawLine(X_DIM / 2 - 8, 0, X_DIM / 2 - 8, Y_DIM);
       }
     };
     this.add(mainPanel); //Adds mainPanel as the main display
@@ -61,6 +63,7 @@ public class Background extends JFrame {
         Thread.sleep(tick);
         //Moves players and refreshes the canvas
         player1.move();
+        player2.move();
         ball.move();
         mainPanel.repaint();
       } catch (InterruptedException e1) {

@@ -34,14 +34,14 @@ public class Slime extends JComponent {
   private final String UP_KEY; //Keybinding of jump
   private final String LEFT_KEY; //Keybinding of moving left
   private final String RIGHT_KEY; //Keybinding of moving right
-  private boolean rightPressed;
-  private boolean leftPressed;
+  private boolean rightPressed; //Keeps track of whether the right key is pressed
+  private boolean leftPressed; //Keeps track of whether the left key is pressed
   
   private Ball ball; //Private instance of the ball for easy access
   private int ticksSinceBallHit; //Removes the possibility of immediately catching the ball
   private final int TICKS_THRESHOLD; //The minimum amount of ticks between ball hits.
   
-  private BufferedImage greenSlime; //The image of one of the slimes
+  private BufferedImage slime; //The image of the slime
   
   /**
    * A mess of a constructor that basically instantiates anything that could even possibly
@@ -76,11 +76,20 @@ public class Slime extends JComponent {
     moveSpeed = 10;
     jumpSpeed = 15;
     //Imports the image of the slime cus APPARENTLY Java can't draw semicircles
-    try {
-      greenSlime = ImageIO.read(new File("GreenSlime.png"));
-    } catch (IOException e1) {
-      System.out.println("Oops");
-      greenSlime = null;
+    if (up.equals("W")) {
+      try {
+        slime = ImageIO.read(new File("GreenSlime.png"));
+      } catch (IOException e1) {
+        System.out.println("Oops");
+        slime = null;
+      }
+    } else {
+      try {
+        slime = ImageIO.read(new File("RedSlime.png"));
+      } catch (IOException e1) {
+        System.out.println("Oops");
+        slime = null;
+      }
     }
     
     WIDTH = width;
@@ -178,7 +187,7 @@ public class Slime extends JComponent {
    * @param g The graphics object upon which this will draw itself.
    */
   public void draw(Graphics g) {
-    g.drawImage(greenSlime, xPos, yPos, WIDTH, HEIGHT, null);
+    g.drawImage(slime, xPos, yPos, WIDTH, HEIGHT, null);
   }
   
   /**

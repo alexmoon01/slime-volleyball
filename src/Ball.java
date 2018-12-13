@@ -11,9 +11,9 @@ public class Ball extends JComponent {
 
   private static final double G = Slime.G / 2; //The acceleration of gravity
   //How bouncy the slime is (ABSOLUTELY DO NOT MAKE THIS GREATER THAN 1 IF YOU HATE FUN)
-  private static final double COEF_OF_BOUNCE = .9;
+  private static final double COEF_OF_BOUNCE = .85;
   //How sticky the slime is (Keep under one unless u rly wanna yeet this ball)
-  private static final double COEF_OF_FRIC = 1.5;
+  private static final double COEF_OF_FRIC = .15;
   
   private final int START_X; //Starting x
   private final int START_Y; //Starting y
@@ -124,8 +124,8 @@ public class Ball extends JComponent {
     double newYVel = -1 * Math.sin(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
     
     //Takes into account the velocity of the yeeter
-    newXVel += Math.sin(angleOfImpact) * (double)(xVel - yeeter.getxVel()) / COEF_OF_FRIC;
-    newYVel += -1 * Math.abs(Math.cos(angleOfImpact) * (double)(yVel - yeeter.getyVel()) / COEF_OF_FRIC);
+    newXVel += Math.sin(angleOfImpact) * (double)(xVel - yeeter.getxVel()) * COEF_OF_FRIC;
+    newYVel += -1 * Math.abs(Math.cos(angleOfImpact) * (double)(yVel - yeeter.getyVel()) * COEF_OF_FRIC);
     
     xVel = newXVel;
     yVel = newYVel;
