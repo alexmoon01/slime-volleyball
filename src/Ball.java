@@ -60,13 +60,18 @@ public class Ball extends JComponent {
     //Doesn't move if it's grounded.
     if (!isGrounded()) {
       //Bounces off the walls
-      if ((xPos + 2 * RADIUS>= MAX_X && xVel > 0) || 
+      if ((xPos + 2 * RADIUS >= MAX_X && xVel > 0) || 
           (xPos <= MIN_X && xVel < 0)) {
         xVel *= -1;
       }
       xPos += xVel;
       yPos += yVel;
       yVel += G;
+      if (xPos <= MAX_X / 2 + Background.getNetWidth()
+          && xPos + 2 * RADIUS >= MAX_X / 2 - Background.getNetWidth()
+          && yPos + 2 * RADIUS >= MAX_Y - Background.getNetHeight()) {
+        xVel *= -1;
+      }
     } else {
       //Resets position of ball if it's hit the ground
       xPos = START_X;
