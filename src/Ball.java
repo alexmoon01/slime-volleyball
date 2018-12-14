@@ -107,22 +107,29 @@ public class Ball extends JComponent {
     //The true center of the slime
     double yeetX = yeeter.getxPos() + (yeeter.getWidth() / 2);
     double yeetY = yeeter.getyPos() + yeeter.getHeight();
+    //The true center of the ball
     double ballTrueX = xPos + RADIUS;
     double ballTrueY = yPos + RADIUS;
+    //The initial distance between the ball and the slime
+    double trueDistance = Math.sqrt(Math.pow(yeetX - ballTrueX, 2) + Math.pow(yeetY - ballTrueY, 2));
+    //The angle at which the ball is moving
+    double angleOfApproach = Math.atan2((double)yVel, (double)xVel);
+    
+    //Oh my GOD this was annoying. Iterates position back along velocity vector until on the surface of the slime.
+    while (trueDistance < yeeter.getHeight() + RADIUS) {
+      ballTrueX -= Math.cos(angleOfApproach);
+      ballTrueY -= Math.sin(angleOfApproach);
+      trueDistance = Math.sqrt(Math.pow(yeetX - ballTrueX, 2) + Math.pow(yeetY - ballTrueY, 2));
+    }
     
     //Finding the magnitude of the velocity of the ball
     double magVelocity = Math.sqrt(Math.pow(xVel, 2) + Math.pow(yVel, 2));
     
     //The angle at which the ball meets the slime
     double angleOfImpact = Math.atan2(ballTrueY - yeetY, ballTrueX - yeetX);
-    //The angle at which the ball is moving
-    double angleOfApproach = Math.atan2((double)yVel, (double)xVel);
+    
     //Reflects the angle of approach across the angle of impact. Trust me I did math for this.
     double initAngleOfDeparture = (2 * angleOfImpact) - angleOfApproach;
-    
-    //Corrects position of ball to be on the surface of the slime (Angle is the same, above impact calc is fine)
-    xPos = (int)yeetX + (int)(Math.cos(angleOfImpact) * (double)(RADIUS + yeeter.getHeight())) - RADIUS;
-    yPos = (int)yeetY + (int)(Math.sin(angleOfImpact) * (double)(RADIUS + yeeter.getHeight())) - RADIUS;
     
     //Applies this transformation to the ball
     double newXVel = -1 * Math.cos(initAngleOfDeparture) * magVelocity * COEF_OF_BOUNCE;
