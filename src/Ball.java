@@ -67,10 +67,17 @@ public class Ball extends JComponent {
       xPos += xVel;
       yPos += yVel;
       yVel += G;
+      //Bounces off the net
       if (xPos <= MAX_X / 2 + Background.getNetWidth()
           && xPos + 2 * RADIUS >= MAX_X / 2 - Background.getNetWidth()
           && yPos + 2 * RADIUS >= MAX_Y - Background.getNetHeight()) {
-        xVel *= -1;
+        //Bounces off the top of the net
+        if (yPos + RADIUS <= MAX_Y - Background.getNetHeight()) {
+          yVel = -1 * Math.abs(yVel);
+        } else {
+          //Bounces off the side of the net
+          xVel *= -1;
+        }
       }
     } else {
       //Resets position of ball if it's hit the ground
