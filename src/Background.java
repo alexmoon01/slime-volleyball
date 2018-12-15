@@ -29,11 +29,11 @@ public class Background extends JFrame {
     X_DIM = 1000;
     Y_DIM = 500;
     
-    tick = 50;
+    tick = 30;
     
     ball = new Ball(100, 100, 0, X_DIM - 16, Y_DIM - 25, 10);
-    player1 = new Slime(X_DIM / 4, Y_DIM - 25, 0, X_DIM / 2 - 8, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
-    player2 = new Slime(3 * X_DIM / 4, Y_DIM - 25, X_DIM / 2 - 8, X_DIM - 16, Y_DIM - 25, "UP", "LEFT","RIGHT", 100, 50, ball);
+    player1 = new Slime(X_DIM / 4 - 50, Y_DIM - 25, 0, X_DIM / 2 - 8, Y_DIM - 25, "W", "A", "D", 100, 50, ball);
+    player2 = new Slime(3 * X_DIM / 4 - 50, Y_DIM - 25, X_DIM / 2 - 8, X_DIM - 16, Y_DIM - 25, "UP", "LEFT","RIGHT", 100, 50, ball);
     netHeight = 100;
     netWidth = 4;
     
@@ -59,6 +59,7 @@ public class Background extends JFrame {
     this.add(player1); //Adds the first player
     this.add(player2); //Adds the second player
     this.add(ball); //Adds the ball
+    ball.respawn(player1); //Sets the initial position of the ball
 
     this.setVisible(true);
     mainPanel.setSize(X_DIM, Y_DIM); //Actually setting the size

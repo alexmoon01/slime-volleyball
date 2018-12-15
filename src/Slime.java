@@ -207,6 +207,12 @@ public class Slime extends JComponent {
     if (!(xPos >= MAX_X && xVel > 0) && !(xPos <= MIN_X && xVel < 0)) {
       xPos += xVel;
     }
+    if (xPos >= MAX_X) {
+      xPos = MAX_X;
+    }
+    if (xPos <= MIN_X) {
+      xPos = MIN_X;
+    }
     //Moves slime up and down, then resolves gravity and floor
     yPos += yVel;
     if (yPos < MAX_Y) {
@@ -227,8 +233,9 @@ public class Slime extends JComponent {
     //Checks if the ball is grounded.
     if(ball.isGrounded()) {
       //Increments score if ball is on the right side of the net
-      if (ball.getxPos() + ball.getRadius() * 2 > MAX_X || ball.getxPos() < MIN_X) {
+      if (ball.getxPos() > MAX_X + WIDTH || ball.getxPos() + ball.getRadius() * 2 < MIN_X) {
         score++;
+        ball.respawn(this);
       }
     }
   }

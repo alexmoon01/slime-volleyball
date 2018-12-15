@@ -79,12 +79,6 @@ public class Ball extends JComponent {
           xVel *= -1;
         }
       }
-    } else {
-      //Resets position of ball if it's hit the ground
-      xPos = START_X;
-      yPos = START_Y;
-      yVel = 0;
-      xVel = 0;
     }
   }
   
@@ -94,6 +88,17 @@ public class Ball extends JComponent {
    */
   public boolean isGrounded() {
     return yPos + (RADIUS * 2) >= MAX_Y;
+  }
+  
+  /**
+   * Respawns the slime over the winner of the last point
+   * @param pointWinner The slime who won the point
+   */
+  public void respawn(Slime pointWinner) {
+    yPos = START_Y;
+    xPos = pointWinner.getxPos() + pointWinner.getWidth() / 2 - RADIUS;
+    xVel = 0;
+    yVel = 0;
   }
   
   /**
