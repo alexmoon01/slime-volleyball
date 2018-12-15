@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
@@ -40,6 +42,7 @@ public class Slime extends JComponent {
   private Ball ball; //Private instance of the ball for easy access
   private int ticksSinceBallHit; //Removes the possibility of immediately catching the ball
   private final int TICKS_THRESHOLD; //The minimum amount of ticks between ball hits.
+  private int score; //The score of this slime
   
   private BufferedImage slime; //The image of the slime
   
@@ -92,13 +95,15 @@ public class Slime extends JComponent {
       }
     }
     
+    score = 0;
+    
     WIDTH = width;
     HEIGHT = height;
     //Corrects boundaries for width and height of slime
     MIN_X = minX;
     MAX_X = maxX - WIDTH;
     MAX_Y = maxY - HEIGHT;
-    TICKS_THRESHOLD = 2;
+    TICKS_THRESHOLD = 4;
     ticksSinceBallHit = TICKS_THRESHOLD + 1;
     
     UP_KEY = up;
@@ -187,6 +192,10 @@ public class Slime extends JComponent {
    * @param g The graphics object upon which this will draw itself.
    */
   public void draw(Graphics g) {
+    g.setColor(Color.BLACK);
+    int fontSize = 40;
+    g.setFont(new Font("Times New Roman", Font.BOLD, fontSize));
+    g.drawString(String.valueOf(score), (MIN_X + MAX_X) / 2 + fontSize, 40);
     g.drawImage(slime, xPos, yPos, WIDTH, HEIGHT, null);
   }
   
@@ -213,6 +222,14 @@ public class Slime extends JComponent {
       ticksSinceBallHit = 0;
     } else {
       ticksSinceBallHit++;
+    }
+    
+    //Checks if the ball is grounded.
+    if(ball.isGrounded()) {
+      //Increments score if ball is on the right side of the net
+      if (ball.getxPos() + ball.getRadius() * 2 > MAX_X || ball.getxPos() < MIN_X) {
+        score++;
+      }
     }
   }
   

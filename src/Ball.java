@@ -11,9 +11,9 @@ public class Ball extends JComponent {
 
   private static final double G = Slime.G / 2; //The acceleration of gravity
   //How bouncy the slime is (ABSOLUTELY DO NOT MAKE THIS GREATER THAN 1 IF YOU HATE FUN)
-  private static final double COEF_OF_BOUNCE = .85;
+  private static final double COEF_OF_BOUNCE = .8;
   //How sticky the slime is (Keep under one unless u rly wanna yeet this ball)
-  private static final double COEF_OF_FRIC = .15;
+  private static final double COEF_OF_FRIC = .25;
   
   private final int START_X; //Starting x
   private final int START_Y; //Starting y
@@ -119,6 +119,7 @@ public class Ball extends JComponent {
     double ballTrueY = yPos + RADIUS;
     //The initial distance between the ball and the slime
     double trueDistance = Math.sqrt(Math.pow(yeetX - ballTrueX, 2) + Math.pow(yeetY - ballTrueY, 2));
+    
     //The angle at which the ball is moving
     double angleOfApproach = Math.atan2((double)yVel, (double)xVel);
     
